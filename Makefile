@@ -14,5 +14,17 @@ kasm.o:
 kernel.o:
 	$(CC) $(CFLAGS) -m32 kernel/*.c -o kernel/kernel.o
 
+define GRUBCONFIG
+menuentry "wfos" {
+	set root='hd0,1'
+	multiboot /boot/wf-kernel ro
+}
+endef
+export GRUBCONFIG
+install: kernel
+	cp kernel/kernel /boot/wf-kernel
+	echo "Writing Grub config"
+	@echo "$$GRUBCONFIG" > /boot/grub/custom.cfg
+
 clean:
 	rm  -rf kernel/*.o kernel/kernel
